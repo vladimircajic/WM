@@ -1,0 +1,123 @@
+﻿@model WebApplication1.Models.ProductViewModels
+@{
+    ViewBag.Title = "EditProductMain";
+}
+
+
+<h2>Edit Product: @Model.Products.FirstOrDefault().Name</h2>
+
+@{
+    var id = 'a';
+    List<SelectListItem> listItems = new List<SelectListItem>();
+
+    foreach (var p in Model.ProductCategories)
+    {
+        listItems.Add(new SelectListItem
+        {
+            Text = p.Name,
+            Value = p.Id.ToString(),
+            Selected = p.Id == Model.Products.FirstOrDefault().ProductCategoryId ? true : false
+        });
+    }
+
+}
+<div class="row">
+    Name:  @Html.TextBox("name", Model.Products.FirstOrDefault().Name)
+</div>
+<div class="row">
+    Category: @Html.DropDownList("listItems", listItems, new { @class = "form-control" })
+</div>
+<div class="row">
+    Producer:  @Html.TextBox("producer", Model.Products.FirstOrDefault().Producer)
+</div>
+<div class="row">
+    Supplier: @Html.TextBox("supplier", Model.Products.FirstOrDefault().Supplier)
+</div>
+<div class="row">
+    Price:  @Html.TextBox("price", Model.Products.FirstOrDefault().Price)
+</div>
+<div class="row">
+    <input type="button" value="Edit" id="btnEdit" />
+    <input type="button" value="Cancel" id="btnCancel" />
+</div>
+<div class="row">
+    <label id="lbltipAddedComment">test</label>
+</div>
+
+@section scripts
+{
+    <script>
+        document.getElementById('lbltipAddedComment').innerHTML = '';
+
+        var id = @Model.Products.FirstOrDefault().Id;
+        $('#btnEdit').click(function () { 
+            var name = $('#name').val(); 
+            var producer = $('#producer').val();
+            var supplier = $('#supplier').val();
+            var price = $('#price').val();
+            var categoryId = $('#listItems').val();
+            var isFloatResult = isFloat(price);
+            var isNameResult = isNullOrEmpty(name);
+            var result = isFloatResult && isNameResult;
+            if (result) {
+
+                var JSONObject = {
+                    Id: id,
+                    Name: name,
+                    Producer: producer,
+                    Supplier: supplier,
+                    Price: price,
+                    CategoryId: categoryId
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Products/EditProductAction',
+                    data: JSON.stringify(JSONObject),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(("OK"));
+                        window.location.href = '@Url.Action("EditProduct", "Products")';
+                    },
+                    error: function (error) {
+                        console.log("NOT OK");
+                        console.log(error);
+                        document.getElementById('lbltipAddedComment').innerHTML = 'Error';
+                    }
+                });
+            }
+            else {
+                var text = '';
+                if (!isFloatResult)
+                    text = ' Price is not in correct format.';
+                if (!isNameResult)
+                    text = ' You must put name.'
+                document.getElementById('lbltipAddedComment').innerHTML = 'Warrning.' + text;
+            }
+        });
+
+        $('#btnCancel').click(function () { 
+
+            window.location.href = '@Url.Action("EditProduct", "Products")';
+        });
+
+        function isNullOrEmpty(val) {
+            if (val === "" || !val) {
+                return false;
+            }
+            return true;
+        }
+
+        function isFloat(val) {
+            var floatRegex = /^-?\d+(?:[.,]\d*?)?$/;
+            if (!floatRegex.test(val))
+                return false;
+
+            val = parseFloat(val);
+            if (isNaN(val))
+                return false;
+            return true;
+        }
+    </script>
+}

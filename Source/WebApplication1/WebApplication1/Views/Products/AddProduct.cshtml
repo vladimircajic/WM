@@ -1,0 +1,140 @@
+﻿@model WebApplication1.Models.ProductViewModels
+@{
+    ViewBag.Title = "AddProduct";
+}
+
+<h2>AddProduct</h2>
+
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+
+    foreach (var p in Model.ProductCategories)
+    {
+        listItems.Add(new SelectListItem
+        {
+            Text = p.Name,
+            Value = p.Id.ToString()
+        });
+    }
+}
+<div class="row">
+    Name: <input type="text" name="name" id="name" />
+</div>
+<div class="row">
+    Category: @Html.DropDownList("listItems", listItems, new { @class = "form-control" })
+</div>
+<div class="row">
+    Producer: <input type="text" name="producer" id="producer" />
+</div>
+<div class="row">
+    Supplier: <input type="text" name="supplier" id="supplier" />
+</div>
+<div class="row">
+    Price: <input type="text" name="price" id="price" />
+</div>
+<div class="row">
+    <input type="button" value="Create" id="btnCreate" />
+</div>
+
+<h2>Products</h2>
+
+<table border="1">
+    <tr>
+        <td width="30px" align="center"> Id </td>
+        <td width="100px" align="center"> Name </td>
+        <td width="100px" align="center"> Category </td>
+        <td width="100px" align="center"> Producer </td>
+        <td width="100px" align="center"> Supplier </td>
+        <td width="100px" align="center"> Price </td>
+    </tr>
+</table>
+@foreach (var p in Model.Products)
+{
+    <table border="1">
+
+        <tr>
+            <td width="30px" align="center">  @p.Id </td>
+            <td width="100px" align="center">  @p.Name </td>
+            <td width="100px" align="center">  @p.ProductCategoryName </td>
+            <td width="100px" align="center">  @p.Producer </td>
+            <td width="100px" align="center">  @p.Supplier </td>
+            <td width="100px" align="center">  @p.Price </td>
+        </tr>
+    </table>
+
+}
+<div class="row">
+    <label id="lbltipAddedComment">test</label>
+</div>
+@section scripts
+{
+    <script>
+        document.getElementById('lbltipAddedComment').innerHTML = '';
+        $('#btnCreate').click(function () { 
+
+            var name = $('#name').val(); 
+            var producer = $('#producer').val();
+            var supplier = $('#supplier').val();
+            var price = $('#price').val();
+            var categoryId = $('#listItems').val();
+
+
+            var isFloatResult = isFloat(price);
+            var isNameResult = isNullOrEmpty(name);
+            var result = isFloatResult && isNameResult;
+
+            if (result) {
+            var JSONObject = { 
+                Name: name, 
+                Producer: producer,
+                Supplier: supplier,
+                Price: price,
+                CategoryId: categoryId
+            };
+
+            $.ajax({ //Do an ajax post to the controller
+                type: 'POST',
+                url: './AddProductAction',
+                data: JSON.stringify(JSONObject),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    console.log(("OK"));
+                    window.location.href = '@Url.Action("AddProduct", "Products")';
+                },
+                error: function (error) {
+                    console.log("NOT OK");
+                    console.log(error);}
+                });
+            }
+            else {
+                var text = '';
+                if (!isFloatResult)
+                    text = ' Price is not in correct format.';
+                if (!isNameResult)
+                    text = ' You must put name.'
+                document.getElementById('lbltipAddedComment').innerHTML = 'Warrning.' + text;
+            }
+        });
+
+        function isNullOrEmpty(val) {
+            if (val === "" || !val) {
+                return false;
+            }
+            return true;
+        }
+
+        function isFloat(val) {
+            var floatRegex = /^-?\d+(?:[.,]\d*?)?$/;
+            if (!floatRegex.test(val))
+                return false;
+
+            val = parseFloat(val);
+            if (isNaN(val))
+                return false;
+            return true;
+        }
+
+    </script>
+}
+

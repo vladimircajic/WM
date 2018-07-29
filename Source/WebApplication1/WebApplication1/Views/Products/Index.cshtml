@@ -1,0 +1,12 @@
+﻿@model WebApplication1.Models.ProductViewModels
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<li>@Html.ActionLink("Load products from DB", "LoadProductsDb", "Products")</li>
+<li>@Html.ActionLink("Load products from Json", "LoadProductsJson", "Products")</li>
+<li>@Html.ActionLink("Add product", "AddProduct", "Products")</li>
+<li>@Html.ActionLink("Edit product", "EditProduct", "Products")</li>

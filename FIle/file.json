@@ -1,0 +1,16 @@
+[ 
+    { "id": "1", 
+      "name": "Product 1", 
+      "productCategoryName": "Category 1", 
+      "producer": "Producer 1", 
+      "supplier": "Supplier 1", 
+      "price": "10" 
+	 }, 
+	 { "id": "2", 
+      "name": "Product 2", 
+      "productCategoryName": "Category 2", 
+      "producer": "Producer 2", 
+      "supplier": "Supplier 2", 
+      "price": "20" 
+	 }
+] 

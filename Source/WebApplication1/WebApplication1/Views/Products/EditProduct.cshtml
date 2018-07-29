@@ -1,0 +1,35 @@
+﻿
+@model WebApplication1.Models.ProductViewModels
+@{
+    ViewBag.Title = "EditProductMain";
+}
+
+<h2>Edit Product</h2>
+
+<table border="1">
+    <tr>
+        <td width="50px" align="center">  </td>
+        <td width="30px" align="center"> Id </td>
+        <td width="100px" align="center"> Name </td>
+        <td width="100px" align="center"> Category </td>
+        <td width="100px" align="center"> Producer </td>
+        <td width="100px" align="center"> Supplier </td>
+        <td width="100px" align="center"> Price </td>
+    </tr>
+</table>
+@foreach (var p in Model.Products)
+{
+    <table border="1">
+
+        <tr>
+            <td width="50px" align="center">  @Html.ActionLink("Edit", "EditProductMain", new { id=p.Id }) </td>
+            <td width="30px" align="center">  @p.Id </td>
+            <td width="100px" align="center">  @p.Name </td>
+            <td width="100px" align="center">  @p.ProductCategoryName </td>
+            <td width="100px" align="center">  @p.Producer </td>
+            <td width="100px" align="center">  @p.Supplier </td>
+            <td width="100px" align="center">  @p.Price </td>
+        </tr>
+    </table>
+}
+
